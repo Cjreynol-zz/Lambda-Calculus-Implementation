@@ -2,7 +2,7 @@ module LamExamples where
 
 import PosInt
 import Term
-import Eval
+import Reduction
 
 
 varOne :: Term
@@ -38,10 +38,13 @@ i = Lam(varOne)
 testTerm1 = (App varOne (Lam varOne))
 testTerm2 = (App (Lam (App varOne varOne)) i)
 testTerm3 = (App i i)
+testTerm4 = (App (App (Lam varOne) (varOne)) (App (Lam varOne) (varOne)))
 
 
 ---------------------------------------
 --      Equality Examples
 ---------------------------------------
-testEvalEqual = (eval testTerm1) == testTerm1
-testEvalEqual1 = (eval testTerm2) == testTerm3
+testReduceEqual = (betaReduce testTerm1) == testTerm1
+testReduceEqual1 = (betaReduce testTerm2) == testTerm3
+
+testReduceNotEqual = (betaReduce testTerm4) /= (normalize testTerm4)
