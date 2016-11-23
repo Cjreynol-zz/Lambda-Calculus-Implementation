@@ -1,9 +1,9 @@
 module Term where
 
-import PosInt
+import Nat
 
 
-data Term = Var PosInt | 
+data Term = Var Nat | 
             Lam Term | 
             App Term Term
     deriving (Eq)

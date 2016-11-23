@@ -1,14 +1,14 @@
 module Reduction where
 
 import Term
-import PosInt
+import Nat
 import Subst
 
 
 betaReduce :: Term -> Term
 betaReduce (Var n) = Var n
 betaReduce (Lam t) = Lam (betaReduce t)
-betaReduce (App (Lam t) t') = subst t One t'
+betaReduce (App (Lam t) t') = subst t Zero t'
 betaReduce (App t t') = if redexExists t 
                             then App (betaReduce t) t' 
                             else App t (betaReduce t')

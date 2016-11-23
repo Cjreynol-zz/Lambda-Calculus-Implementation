@@ -1,18 +1,14 @@
 module LamExamples where
 
-import PosInt
+import Nat
 import Term
 import Reduction
 
+varZero = Var Zero
 
-varOne :: Term
-varOne = Var One
+varOne = Var (Succ(Zero))
 
-varTwo :: Term
-varTwo = Var (Succ(One))
-
-varThree :: Term
-varThree = Var (Succ(Succ(One)))
+varTwo = Var (Succ(Succ(Zero)))
 
 
 ---------------------------------------
@@ -23,22 +19,22 @@ varThree = Var (Succ(Succ(One)))
 -- I = \x.x
 ---------------------------------------
 s :: Term
-s = Lam(Lam(Lam(App(App varThree varOne)(App varTwo varOne))))
+s = Lam(Lam(Lam(App(App varTwo varZero)(App varOne varZero))))
 
 k :: Term
-k = Lam(Lam(varTwo))
+k = Lam(Lam(varOne))
 
 i :: Term
-i = Lam(varOne)
+i = Lam(varZero)
 
 
 ---------------------------------------
 --      Term Examples
 ---------------------------------------
-testTerm1 = (App varOne (Lam varOne))
-testTerm2 = (App (Lam (App varOne varOne)) i)
+testTerm1 = (App varZero (Lam varZero))
+testTerm2 = (App (Lam (App varZero varZero)) i)
 testTerm3 = (App i i)
-testTerm4 = (App (App (Lam varOne) (varOne)) (App (Lam varOne) (varOne)))
+testTerm4 = (App (App (Lam varZero) (varZero)) (App (Lam varZero) (varZero)))
 
 
 ---------------------------------------
