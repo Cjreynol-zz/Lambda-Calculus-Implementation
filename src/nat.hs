@@ -2,18 +2,30 @@ module Nat where
 
 data Nat =   Succ Nat | 
                 Zero
-    deriving (Eq, Ord)
 
 instance Show Nat where
-    show n = show (nat2int n)
+    show n = show (natToInt n)
 
-nat2int :: Nat -> Int
-nat2int (Zero) = 0
-nat2int (Succ n) = 1 + (nat2int n)
+instance Eq Nat where
+    (==) (Zero) (Zero) = True
+    (==) (Succ n) (Zero) = False
+    (==) (Zero) (Succ m) = False
+    (==) (Succ n) (Succ m) = (==) n m
 
-int2nat :: Int -> Nat
-int2nat i = case (i > 0) of
-                True -> Succ (int2nat (i-1))
+instance Ord Nat where
+    compare (Zero) (Zero) = EQ
+    compare (Succ n) (Zero) = GT
+    compare (Zero) (Succ m) = LT
+    compare (Succ n) (Succ m) = compare n m
+
+natToInt :: Nat -> Int
+natToInt (Zero) = 0
+natToInt (Succ n) = 1 + (natToInt n)
+
+-- the following two functions have a floor of Zero
+intToNat :: Int -> Nat
+intToNat i = case (i > 0) of
+                True -> Succ (intToNat (i-1))
                 False -> Zero
 
 natPred :: Nat -> Nat

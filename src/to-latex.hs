@@ -7,17 +7,17 @@ import Nat
 preamble :: String
 preamble = "\\documentclass{article}\n\\usepackage{forest}\n\\begin{document}\n"
 
-postamble :: String
-postamble = "\\end{document}"
+conclusion :: String
+conclusion = "\\end{document}"
 
-term2LaTeX :: Term -> String
-term2LaTeX t = "\\begin{forest}" ++ (term2LaTeXHelper t) ++ "\\end{forest}\n"
+termToLaTeX :: Term -> String
+termToLaTeX t = "\\begin{forest}" ++ (termToLaTeXHelper t) ++ "\\end{forest} \\\\ \n"
 
-term2LaTeXHelper :: Term -> String
-term2LaTeXHelper (Var n) = "[" ++ (show n) ++ "]"
-term2LaTeXHelper (Lam t) = "[$\\lambda$ " ++ (term2LaTeXHelper t) ++ "]"
-term2LaTeXHelper (App t t') = "[@ " ++ (term2LaTeXHelper t) ++ " " ++ (term2LaTeXHelper t') ++ "]"
+termToLaTeXHelper :: Term -> String
+termToLaTeXHelper (Var n) = "[" ++ (show n) ++ "]"
+termToLaTeXHelper (Lam t) = "[$\\lambda$ " ++ (termToLaTeXHelper t) ++ "]"
+termToLaTeXHelper (App t t') = "[@ " ++ (termToLaTeXHelper t) ++ " " ++ (termToLaTeXHelper t') ++ "]"
 
-termList2LaTeX :: [Term] -> String
-termList2LaTeX [] = ""
-termList2LaTeX (t:ts) = term2LaTeX t ++ termList2LaTeX ts
+termListToLaTeX :: [Term] -> String
+termListToLaTeX [] = ""
+termListToLaTeX (t:ts) = termToLaTeX t ++ termListToLaTeX ts
