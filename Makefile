@@ -10,4 +10,4 @@ pdf:
 	cd out; make
 
 clean:
-	cd bin; rm *.hi *.o; cd ../out; make clean
+	rm lambdaCalc; cd bin; rm *.hi *.o; cd ../out; make clean

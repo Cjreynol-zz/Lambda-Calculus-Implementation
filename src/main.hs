@@ -8,7 +8,9 @@ main = mainLoop 0
 
 mainLoop :: Int -> IO ()
 mainLoop n = do
+                putStrLn "Please enter a lambda term:  "
                 input <- getLine
+                putStrLn "Reduction sequence:"
                 processInput input ("out/reduction" ++ (show n) ++ ".tex")
                 mainLoop (n+1)
 
