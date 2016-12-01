@@ -3,4 +3,4 @@
 # Except this file
 !.gitignore
 
-# This file is to force git to add an empty bin directory and keep it empty
+# This file is to force git to add an empty directory and keep it empty

@@ -1,8 +1,13 @@
 
-# for compilation in the sandbox
+# cabal exec commands used to play nicely with cabal sandboxes
 main:
 	cabal exec -- ghc src/main.hs -isrc -outputdir bin -o lambdaCalc
 
-# for loading up an interactive session with the lambda calculus
 interactive:
 	cabal exec -- ghci src/examples.hs -isrc
+
+pdf:
+	cd out; make
+
+clean:
+	cd bin; rm *.hi *.o; cd ../out; make clean

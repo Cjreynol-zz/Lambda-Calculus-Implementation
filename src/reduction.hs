@@ -32,5 +32,3 @@ getReductionSeqHelper t l
                     | redexExists t = getReductionSeqHelper (betaReduce t) (t:l)
                     | otherwise = (t:l)
 
-termToRedSeqStr :: Term -> String
-termToRedSeqStr t = (termListToStr . getReductionSeq) t
