@@ -1,14 +1,14 @@
-module ToLaTeX where
+module PrettyPrinter where
 
 import Term
 import Nat
 
 
-preamble :: String
-preamble = "\\documentclass{article}\n\\usepackage{forest}\n\\usepackage{amssymb}\n\\begin{document}\n"
+laTeXPreamble :: String
+laTeXPreamble = "\\documentclass{article}\n\\usepackage{forest}\n\\usepackage{amssymb}\n\\begin{document}\n"
 
-conclusion :: String
-conclusion = "\\end{document}"
+laTeXConclusion :: String
+laTeXConclusion = "\\end{document}"
 
 termToLaTeX :: Term -> String
 termToLaTeX t = "\\begin{forest}" ++ (termToLaTeXHelper t) ++ "\\end{forest}\n"
@@ -23,3 +23,7 @@ termListToLaTeX [] = ""
 termListToLaTeX (t:[]) = termToLaTeX t
 termListToLaTeX (t:ts) = termToLaTeX t ++ "$\\rightsquigarrow{}$\n" ++ termListToLaTeX ts
 
+termListToStr :: [Term] -> String
+termListToStr [] = ""
+termListToStr (x:[]) = (show x)
+termListToStr (x:xs) = (show x) ++ " ~>\n" ++ (termListToStr xs)

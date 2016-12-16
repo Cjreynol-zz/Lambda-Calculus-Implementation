@@ -1,7 +1,7 @@
 import Reduction
 import Parser
 import Term
-import ToLaTeX
+import PrettyPrinter
 
 main :: IO ()
 main = mainLoop 0
@@ -20,4 +20,4 @@ processInput input filename = case (myParser input) of
             (Left err) -> putStrLn (show err)
             (Right term) -> do
                             putStrLn $ (termListToStr . getReductionSeq) term
-                            writeFile filename (preamble ++ ((termListToLaTeX . getReductionSeq) term) ++ conclusion)
+                            writeFile filename (laTeXPreamble ++ ((termListToLaTeX . getReductionSeq) term) ++ laTeXConclusion)

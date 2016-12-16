@@ -4,9 +4,6 @@ import Term
 import Nat
 
 
--- substitution (as shown in Chris Hankin's 
--- Introduction to Lambda Calculus for Computer Science)
-
 subst :: Term -> Nat -> Term -> Term
 subst (Var n) m t'
             | n < m = Var n

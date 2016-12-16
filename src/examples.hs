@@ -4,27 +4,21 @@ import Nat
 import Term
 import Reduction
 
+---------------------------------------
+--      Useful Variables
+---------------------------------------
 varZero = Var Zero
-
 varOne = Var (Succ(Zero))
-
 varTwo = Var (Succ(Succ(Zero)))
 
 
 ---------------------------------------
 --      SKI Combinators
 ---------------------------------------
--- S = \xyz.xz(yz)
--- K = \xy.x
--- I = \x.x
----------------------------------------
-s :: Term
 s = Lam(Lam(Lam(App(App varTwo varZero)(App varOne varZero))))
 
-k :: Term
 k = Lam(Lam(varOne))
 
-i :: Term
 i = Lam(varZero)
 
 

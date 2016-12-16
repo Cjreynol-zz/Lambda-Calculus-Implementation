@@ -1,0 +1,113 @@
+\documentclass[12pt,oneside]{article}
+
+\usepackage{forest}
+\usepackage{amssymb}
+
+\setlength{\parindent}{0in}
+\bibliographystyle{acm}
+
+
+\begin{document}
+
+Chad Reynolds \hfill 
+CS:5850 Programming Language Foundations \\ 
+Final Project Report \hfill 
+Due:  December 15, 2016 \\
+
+
+\section*{Introduction} 
+My project goal was to implement pure lambda calculus with De Bruijn indices, 
+in Haskell.  To accomplish this I wrote a simple (and mostly functioning) 
+parser using the Parsec library, which converts the string input to the 
+internal datatype for lambda terms.  The program attempts to reduce this 
+term to normal form, or loops endlessly if a normal form does not exist.  
+Once a normal form is found the program outputs the reduction sequence of terms, 
+it also writes out \LaTeX{} markup to a file that displays 
+this reduction sequences as syntax trees.
+
+\section*{Code Overview}
+\begin{itemize}
+\item \textbf{term.hs} - 
+    datatype definition for De Bruijn indexed lambda terms
+\item \textbf{nat.hs} - 
+    simple natural number implementation
+\item \textbf{reduction.hs} - 
+    beta-reduction and normalization functions
+\item \textbf{subst.hs} - 
+    the substitution and renaming functions used in beta reduction, as 
+    defined in Hankin \cite{hankin2004introduction}
+\item \textbf{prettyPrinter.hs} - 
+    the toStr and toLaTeX functions for nice output
+\item \textbf{parser.hs} - 
+    the parser, takes strings and converts them into the Term datatype for processing
+\item \textbf{main.hs} - 
+    the main loop, where terms are input and their reduction to normal form 
+    is output
+\end{itemize}
+
+\section*{Setup \& Installation} 
+The program relies on a working Haskell installation, and also an 
+installation of the Parsec library.  It was written and tested using 
+GHC version 8.0.1.20161117 and Parsec version 3.1.11.  Make is also useful 
+to run the commands in the Makefile I created.  All commands are expected to 
+be run from the project's base directory.  Running them in subfolders will 
+either fail or cause files to be generated improperly. \\
+
+Once everything is installed, running \textit{make} will build the lambdaCalc 
+executable and \textit{make interactive} will start the ghci REPL with
+examples.hs in scope.  The examples file has a number of lamba terms, variables, 
+comparisons of reductions, the SKI combinators, and also loads the Term datatype 
+definition, reduction, and substitution for interactive testing.
+
+\section*{Running the Code} 
+Running the lambdaCalc executable will bring up a prompt to enter in a lambda 
+term to be reduced.  Lambdas are represented by $\backslash$ characters and terms 
+are written using standard De Bruijn syntax, where the variables are 
+natural numbers that reference their binder.  Application is implicit, but 
+there are cases where the parser fails to recognize valid terms or 
+improperly parses others.
+To avoid this problem, fully parenthesize all of the terms you provide as 
+input.  For example, ($\backslash$.00)$\backslash$.0 is valid, but should be entered as ($\backslash$.00)
+($\backslash$.0) to avoid any errors. \\
+
+After a term is entered, if it terminates a reduction sequence to its normal form 
+will be displayed.  In the \textit{out} directory a .tex file will be written 
+with a name in the format \textbf{reduction$\textless$prompt\_number$\textgreater$.tex}.  
+All of these files can be compiled to pdf at once using the \textit{make pdf} command. \\
+
+\section*{Sample Input \& Output}
+
+Please enter a lambda term: \\
+($\backslash$.00)($\backslash$.0) \\
+Reduction sequence:\\
+(($\backslash$.(0 0)) ($\backslash$.0)) \texttt{>}\\
+(($\backslash$.0) ($\backslash$.0)) \texttt{>}\\
+($\backslash$.0)
+
+\begin{forest}[@ [$\lambda$ [@ [0] [0]]] [$\lambda$ [0]]]\end{forest}
+$\rightsquigarrow{}$
+\begin{forest}[@ [$\lambda$ [0]] [$\lambda$ [0]]]\end{forest}
+$\rightsquigarrow{}$
+\begin{forest}[$\lambda$ [0]]\end{forest}
+
+($\backslash$.010)(($\backslash$.0)($\backslash$.0)) \\
+Reduction sequence: \\
+(($\backslash$.((0 1) 0)) (($\backslash$.0) ($\backslash$.0))) \texttt{>} \\
+(((($\backslash$.0) ($\backslash$.0)) 0) (($\backslash$.0) ($\backslash$.0))) \texttt{>} \\
+((($\backslash$.0) 0) (($\backslash$.0) ($\backslash$.0))) \texttt{>} \\
+(0 (($\backslash$.0) ($\backslash$.0))) \texttt{>} \\
+(0 ($\backslash$.0)) \\
+
+\begin{forest}[@ [$\lambda$ [@ [@ [0] [1]] [0]]] [@ [$\lambda$ [0]] [$\lambda$ [0]]]]\end{forest}
+$\rightsquigarrow{}$
+\begin{forest}[@ [@ [@ [$\lambda$ [0]] [$\lambda$ [0]]] [0]] [@ [$\lambda$ [0]] [$\lambda$ [0]]]]\end{forest}
+$\rightsquigarrow{}$
+\begin{forest}[@ [@ [$\lambda$ [0]] [0]] [@ [$\lambda$ [0]] [$\lambda$ [0]]]]\end{forest}
+$\rightsquigarrow{}$
+\begin{forest}[@ [0] [@ [$\lambda$ [0]] [$\lambda$ [0]]]]\end{forest}
+$\rightsquigarrow{}$
+\begin{forest}[@ [0] [$\lambda$ [0]]]\end{forest}
+
+\bibliography{final_report}
+
+\end{document}
