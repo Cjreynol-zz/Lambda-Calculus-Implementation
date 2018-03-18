@@ -7,9 +7,8 @@ This project has most recently been tested using GHC 8.2.2, and requires an
 installation of the `parsec` library.  
   
 Running `make` in the project directory will build the executable 
-`lambdaCalc` and `make interactive` will start a ghci repl with Examples.hs 
-in scope to make testing easier.  
-  
+`lambdaCalc`.
+
 ## Run  
 Running the lambdaCalc executable will bring up a prompt to enter in a lambda 
 term to be reduced.  Lambdas are represented by `\` characters and terms 

@@ -2,7 +2,7 @@ main:
 	cabal exec -- ghc src/Main.hs -Wall -isrc -outputdir bin -o lambdaCalc
 
 interactive:
-	cabal exec -- ghci src/Examples.hs -isrc
+	cabal exec -- ghci -isrc
 
 documentation:
 	cabal exec -- haddock -o docs -h src/*.hs
