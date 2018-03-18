@@ -1,12 +1,20 @@
-module Parser where
+{-|
+Module      : Parser
+Description : Parsing functions for Terms
+Copyright   : (c) Chad Reynolds, 2018
+-}
+module Parser(
+    termParser
+    ) where
 
-import Data.Char
 
-import Text.Parsec
-import Text.Parsec.String
+import Data.Char            (digitToInt)
+import Text.Parsec          (ParseError, char, digit, many1, parse, spaces, 
+                                (<|>))
+import Text.Parsec.String   (Parser)
 
-import Term
-import Nat
+import Term                 (Term(..))
+import Nat                  (intToNat) 
 
 
 parseTerm :: Parser Term
@@ -37,5 +45,7 @@ parseVarParens = do spaces
                     spaces
                     return term
 
-myParser :: String -> Either ParseError Term
-myParser input = parse parseTerm "" input
+-- | Parser for Terms, currently parses improperly on some terms so full 
+-- parenthesizing is needed for guaranteed accuracy.
+termParser :: String -> Either ParseError Term
+termParser input = parse parseTerm "" input

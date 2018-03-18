@@ -1,8 +1,26 @@
-# Project Proposal for CS:5850 Programming Language Foundations
+# Lambda Calculus  
+This project is an implementation of untyped lambda calculus with De Bruijn 
+indices.  
+  
+## Build  
+This project has most recently been tested using GHC 8.2.2, and requires an 
+installation of the `parsec` library.  
+  
+Running `make` in the project directory will build the executable 
+`lambdaCalc` and `make interactive` will start a ghci repl with Examples.hs 
+in scope to make testing easier.  
+  
+## Run  
+Running the lambdaCalc executable will bring up a prompt to enter in a lambda 
+term to be reduced.  Lambdas are represented by `\` characters and terms 
+are written using standard De Bruijn syntax, where the variables are 
+natural numbers that reference their binder.  
+  
+Application is implicit, but there are cases where the parser fails to 
+recognize valid terms or improperly parses others.  To avoid this problem, 
+fully parenthesize all of the terms you provide as input.  For example, 
+`(\.00)\.0` is valid, but should be entered as `(\.00)(\.0)` to avoid any 
+errors.  
 
-My plan is to work on the suggested ”Implementing pure lambda calculus”
-project. My implementation would be done in Haskell, encoding the lambda terms
-as a Haskell datatype and using De Bruijn indices to avoid variable capture.
-The output would be some form of LATEX markup, showing syntax trees or the
-terms (or both!). My plan for parsing input is to use the Haskell Parsec
-library, which simplifies the creation of simple language parsers.
+After a term is entered, if it terminates a reduction sequence to its normal 
+form will be displayed.  

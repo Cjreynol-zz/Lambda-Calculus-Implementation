@@ -1,20 +1,20 @@
-
-# if the Parsec library is installed in a sandbox, use the commented
-# versions of the commands
-
 main:
-	#cabal exec -- ghc src/main.hs -isrc -outputdir bin -o lambdaCalc
-	ghc src/main.hs -isrc -outputdir bin -o lambdaCalc
+	cabal exec -- ghc src/Main.hs -Wall -isrc -outputdir bin -o lambdaCalc
 
 interactive:
-	#cabal exec -- ghci src/examples.hs -isrc
-	ghci src/examples.hs -isrc
+	cabal exec -- ghci src/Examples.hs -isrc
 
-pdf:
-	cd out; make
+documentation:
+	cabal exec -- haddock -o docs -h src/*.hs
 
 clean:
-	cd bin; rm *.hi *.o; cd ../out; make clean
+	rm lambdaCalc bin/*.hi bin/*.o
+
+cleanDocs:
+	rm -f docs/*
 
 nuke:
-	make clean; rm lambdaCalc; cd out; make nuke
+	make clean; make cleanDocs
+
+all:
+	make main; make documentation
