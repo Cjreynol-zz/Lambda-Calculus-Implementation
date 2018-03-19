@@ -2,6 +2,7 @@
 Module      : Nat
 Description : Datatype for natural numbers
 Copyright   : (c) Chad Reynolds, 2018
+License     : MIT
 -}
 module Nat(
     Nat(..),

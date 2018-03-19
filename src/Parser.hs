@@ -2,6 +2,7 @@
 Module      : Parser
 Description : Parsing functions for Terms
 Copyright   : (c) Chad Reynolds, 2018
+License     : MIT
 -}
 module Parser(
     termParser

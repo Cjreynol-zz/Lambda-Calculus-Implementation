@@ -2,6 +2,7 @@
 Module      : Substitution
 Description : Substitution implementation for De Bruijn indexed lambda terms
 Copyright   : (c) Chad Reynolds, 2018
+License     : MIT
 -}
 module Substitution(
     subst

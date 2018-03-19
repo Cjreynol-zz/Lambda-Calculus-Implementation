@@ -2,6 +2,7 @@
 Module      : Reduction
 Description : Functions for beta reduction and full normalization of terms
 Copyright   : (c) Chad Reynolds, 2018
+License     : MIT
 -}
 module Reduction(
     betaReduce,

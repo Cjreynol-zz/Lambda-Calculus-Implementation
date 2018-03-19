@@ -2,6 +2,7 @@
 Module      : Main
 Description : Command-line interface for parsing and evaluating terms
 Copyright   : (c) Chad Reynolds, 2018
+License     : MIT
 -}
 module Main(
     main

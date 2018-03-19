@@ -4,10 +4,12 @@ indices.
   
 ## Build  
 This project has most recently been tested using GHC 8.2.2, and requires an 
-installation of the `parsec` library.  
-  
-Running `make` in the project directory will build the executable 
-`lambdaCalc`.
+installation of the `parsec` library.  See the included `.cabal` file for 
+specific version requirements.
+
+From the root directory, run `cabal build` to install dependencies and build 
+the executable, which will be located in the dist/build/hask-lambda 
+directory.  
 
 ## Run  
 Running the lambdaCalc executable will bring up a prompt to enter in a lambda 

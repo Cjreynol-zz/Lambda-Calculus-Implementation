@@ -3,6 +3,7 @@ Module      : Term
 Description : Untyped lambda terms using De Bruijn indices to avoid variable 
                 capture
 Copyright   : (c) Chad Reynolds, 2018
+License     : MIT
 -}
 module Term(
     Term(..),
