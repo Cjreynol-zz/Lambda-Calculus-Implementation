@@ -13,15 +13,17 @@ directory.
 
 ## Run  
 Running the lambdaCalc executable will bring up a prompt to enter in a lambda 
-term to be reduced.  Lambdas are represented by `\` characters and terms 
-are written using standard De Bruijn syntax, where the variables are 
-natural numbers that reference their binder.  
+term to be reduced.  From the parser documentation:
   
-Application is implicit, but there are cases where the parser fails to 
-recognize valid terms or improperly parses others.  To avoid this problem, 
-fully parenthesize all of the terms you provide as input.  For example, 
-`(\.00)\.0` is valid, but should be entered as `(\.00)(\.0)` to avoid any 
-errors.  
+> No spaces, '\\.' to represent lambda binders.  Vars are represented as 
+> natural numbers referencing their binder.  That binder could be implicit 
+> with free variables in the terms.  Application is implicit with adjacent 
+> terms, and parenthesis can be used to end the binding scope of a lambda.  
+> 
+> For example:  
+> 
+> `\.00` is equivalent to `(\.(0 0))` while `(\.0)0` is equivalent to 
+> `(\.0) 0)`, which is a beta redex.
 
 After a term is entered, if it terminates a reduction sequence to its normal 
-form will be displayed.  
+form will be displayed.  Non-terminating terms cause an infinite loop

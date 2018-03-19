@@ -17,8 +17,8 @@ import Term         (termListToStr)
 -- | Main loop of execution. 
 -- 
 -- Prompts for a lambda term written using standard De Bruijn notation and 
--- the '\' char for lambdas.  Then the term will be reduced to normal form 
--- and the full sequence will be output.
+-- the '\' char for lambdas.  The term will then be reduced to normal form 
+-- and the full step-by-step reduction sequence will be displayed.
 main :: IO ()
 main = do
         putStrLn "Please enter a lambda term:  "
