@@ -9,9 +9,8 @@ module Main(
     ) where
 
 
-import Reduction    (getReductionSeq)
-import Parser       (termParser)
-import Term         (termListToStr)
+import LambdaTerm   (showReductionSteps)
+import LNParser       (lnTermParser)
 
 
 -- | Main loop of execution. 
@@ -28,7 +27,8 @@ main = do
         main
 
 processInput :: String -> IO ()
-processInput input = case (termParser input) of
-                        (Left err) -> putStrLn (show err)
-                        (Right term) -> putStrLn $ (termListToStr . getReductionSeq) term
+processInput input = 
+    case (lnTermParser input) of
+        (Left err) -> putStrLn (show err)
+        (Right t) -> putStrLn $ showReductionSteps t
 

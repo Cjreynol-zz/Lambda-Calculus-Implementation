@@ -20,11 +20,10 @@ source-repository head
 executable hask-lambda
   main-is:             Main.hs
   
-  other-modules:        Nat,
-                        Parser,
-                        Reduction,
-                        Substitution,
-                        Term
+  other-modules:        LambdaTerm,
+                        LNTerm,
+                        Nat,
+                        Parser
   
   -- other-extensions:    
   
