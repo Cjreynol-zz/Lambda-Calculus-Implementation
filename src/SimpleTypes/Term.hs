@@ -15,7 +15,7 @@ module SimpleTypes.Term(
 
 import              Data.Bifunctor          (first, second)
 import              Data.List               (delete)
-import qualified    Data.Map.Strict as Map  (Map(..), empty, insert, lookup)
+import qualified    Data.Map.Strict as Map  (Map, empty, insert, lookup)
 
 import qualified    Pure.Term       as T    (Term(..), Atom)
 import              Nat                     (Nat(..), allNats)
@@ -46,12 +46,6 @@ instance Show Term where
     show (FVar n) = 'f' : (show n)
     show (Lam ty t) = '\\' : ':' : (show ty) ++ ".(" ++ (show t) ++ ")"
     show (App t t') = '(' : ((show t) ++ " " ++ (show t') ++ ")")
-
-freeVars :: Term -> [T.Atom]
-freeVars (BVar _) = []
-freeVars (FVar a) = [a]
-freeVars (Lam _ t) = freeVars t
-freeVars (App t t') = (freeVars t) ++ (freeVars t')
 
 open :: Term -> T.Atom -> Term -> Term
 open t n (BVar n') = if n == n' then t else BVar n'
@@ -129,8 +123,4 @@ typeCheck' (App t t') c =
         noArrow = Left "Attempting to apply argument to non-arrow type"
         ty1 = typeCheck' t c
         ty2 = typeCheck' t' c
-
-exampleContext = newContext [(Zero, TypeVar 'T')]
-exampleTerm = (App (Lam (TypeVar 'T') (BVar Zero)) (FVar Zero))
-exampleBadTerm = (App (Lam (TypeVar 'V') (BVar Zero)) (FVar Zero))
 

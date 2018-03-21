@@ -16,13 +16,20 @@ import qualified    LambdaTerm as L     (LambdaTerm(..))
 import              Nat                 (Nat(..))
 
 
+-- | Type for free variable labels, to help distinguish from bound variables
 type Atom = Nat
 
-data Term =   BVar Nat |
-                FVar Atom |
-                Lam Term |
-                App Term Term
-                deriving (Eq)
+-- | Untyped lambda terms using the locally nameless representation.
+--
+-- Using the constructors, ill-formed terms can be created.  The function 
+-- locallyClosedCheck should be used after term creation to avoid unexpected 
+-- behavior.  The termParser in Pure.Parser performs this check when parsing 
+-- terms from Strings.
+data Term = BVar Nat |
+            FVar Atom |
+            Lam Term |
+            App Term Term
+            deriving (Eq)
 
 instance L.LambdaTerm Term where
     redexExists = redexExists
