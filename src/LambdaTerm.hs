@@ -1,9 +1,18 @@
+{-|
+Module      : LambdaTerm
+Description : Typeclass for use with command-line interface
+Copyright   : (c) Chad Reynolds, 2018
+License     : MIT
+-}
 module LambdaTerm(
     LambdaTerm(..)
     ) where
 
 
+-- | Enforces functions needed by main execution loop, provides default 
+-- implementations of some for convenience.
 class Show a => LambdaTerm a where
+
     -- | Determine if a beta reducible expression exists within the term.
     redexExists :: a -> Bool
 
@@ -22,11 +31,9 @@ class Show a => LambdaTerm a where
     showReductionSteps :: a -> String
     showReductionSteps t = helper . getSteps $ t
         where 
-            getSteps :: LambdaTerm a => a -> [a]
             getSteps t' = case redexExists t' of
                             True -> t' : (getSteps $ betaReduce t')
                             False -> [t']
-            helper :: Show a => [a] -> String
             helper [] = ""
             helper (x:[]) = show x
             helper (x:xs) = (show x) ++ " ~>\n" ++ (helper xs)

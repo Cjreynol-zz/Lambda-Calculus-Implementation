@@ -1,11 +1,11 @@
 {-|
-Module      : Term
+Module      : LegacyPure.Term
 Description : Untyped lambda terms using De Bruijn indices to avoid variable 
                 capture
 Copyright   : (c) Chad Reynolds, 2018
 License     : MIT
 -}
-module Term(
+module LegacyPure.Term(
     Term(..),
     ) where
 
@@ -21,8 +21,8 @@ data Term = Var Nat |
     deriving (Eq)
 
 instance L.LambdaTerm Term where
-    redexExists = Term.redexExists
-    betaReduce = Term.betaReduce
+    redexExists = redexExists
+    betaReduce = betaReduce
 
 instance Show Term where
     show (Var n) = show n

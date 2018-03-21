@@ -21,15 +21,18 @@ executable hask-lambda
   main-is:             Main.hs
   
   other-modules:        LambdaTerm,
-                        LNParser,
-                        LNTerm,
+                        LegacyPure.Term,
+                        LegacyPure.Parser,
                         Nat,
-                        Parser,
-                        Term
+                        Pure.Parser,
+                        Pure.Term,
+                        SimpleTypes.Term,
+                        SimpleTypes.Parser
   
   -- other-extensions:    
   
-  build-depends:       base >=4.10 && <4.11, parsec >=3.1 && <3.2
+  build-depends:       base >=4.10 && <4.11, parsec >=3.1 && <3.2, 
+                        containers >=0.5.10.2
   
   hs-source-dirs:      src
   

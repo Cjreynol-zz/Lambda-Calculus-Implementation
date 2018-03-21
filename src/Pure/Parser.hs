@@ -1,5 +1,11 @@
-module LNParser(
-    lnTermParser
+{-|
+Module      : Pure.Parser
+Description : Parser for locally nameless untyped lambda terms
+Copyright   : (c) Chad Reynolds, 2018
+License     : MIT
+-}
+module Pure.Parser(
+    termParser
     ) where
 
 
@@ -8,44 +14,44 @@ import Data.Char            (digitToInt)
 import Text.Parsec          (ParseError, char, digit, many1, parse, (<|>))
 import Text.Parsec.String   (Parser)
 
-import LNTerm               (LNTerm(..), locallyClosedCheck)
+import Pure.Term            (Term(..), locallyClosedCheck)
 import Nat                  (intToNat) 
 
 
-parseLam :: Parser LNTerm
+parseLam :: Parser Term
 parseLam = do
             _ <- char '\\'
             _ <- char '.'
-            term <- parseLNTerms
+            term <- parseTerms
             return $ Lam term
 
-parseBVar :: Parser LNTerm
+parseBVar :: Parser Term
 parseBVar = do
             nat <- digit
             return $ BVar (intToNat (digitToInt nat))
 
-parseFVar :: Parser LNTerm
+parseFVar :: Parser Term
 parseFVar = do
                 _ <- char 'f'
                 nat <- digit
                 return $ FVar (intToNat (digitToInt nat))
 
-parseParenLNTerm :: Parser LNTerm
-parseParenLNTerm = do
+parseParenTerm :: Parser Term
+parseParenTerm = do
                     _ <- char '('
-                    term <- parseLNTerms
+                    term <- parseTerms
                     _ <- char ')'
                     return $ term
 
-parseLNTerm :: Parser LNTerm
-parseLNTerm = parseParenLNTerm <|> parseLam <|> parseFVar <|> parseBVar 
+parseTerm :: Parser Term
+parseTerm = parseParenTerm <|> parseLam <|> parseFVar <|> parseBVar 
 
-parseLNTerms :: Parser LNTerm
-parseLNTerms = do
-                applications <- many1 parseLNTerm
+parseTerms :: Parser Term
+parseTerms = do
+                applications <- many1 parseTerm
                 return $ foldl1 App applications
 
--- | Parser for LNTerms.  
+-- | Parser for Terms.  
 --
 -- No spaces, \\ . to represent lambda binders.  Bound variables are 
 -- represented as natural numbers referencing their binder.  Free variables 
@@ -58,5 +64,6 @@ parseLNTerms = do
 -- \\ .00 is equivalent to (\\ .(0 0)) while (\\ .0)f0 is equivalent to 
 -- (\\ .0) 0), which is a beta redex where the 0 outside the lambda 
 -- abstraction is a free variable.
-lnTermParser :: String -> Either ParseError (Either String LNTerm)
-lnTermParser input = second locallyClosedCheck $ parse parseLNTerms "" input
+termParser :: String -> Either ParseError (Either String Term)
+termParser input = second locallyClosedCheck $ parse parseTerms "" input
+

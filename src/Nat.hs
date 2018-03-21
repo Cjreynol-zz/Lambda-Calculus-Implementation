@@ -37,6 +37,7 @@ instance Ord Nat where
     compare (Zero) (Succ _) = LT
     compare (Succ n) (Succ m) = compare n m
 
+-- | Infinite list of all the natural numbers in increasing order from Zero.
 allNats :: [Nat]
 allNats = iterate (\x -> Succ x) Zero
 

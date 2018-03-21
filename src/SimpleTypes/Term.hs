@@ -1,6 +1,12 @@
-module STLNTerm(
-    STLNTerm(..),
-    SType(..),
+{-|
+Module      : SimpleTypes.Term
+Description : Terms(and other types) for STLC
+Copyright   : (c) Chad Reynolds, 2018
+License     : MIT
+-}
+module SimpleTypes.Term(
+    Term(..),
+    Type(..),
     Context,
     newContext,
     typeCheck
@@ -11,79 +17,90 @@ import              Data.Bifunctor          (first, second)
 import              Data.List               (delete)
 import qualified    Data.Map.Strict as Map  (Map(..), empty, insert, lookup)
 
-import qualified    LNTerm          as T    (LNTerm(..), Atom)
+import qualified    Pure.Term       as T    (Term(..), Atom)
 import              Nat                     (Nat(..), allNats)
 
 
-type Var = Char
+-- | Alias used for type variables.
+type TVar = Char
 
-data SType = Arrow SType SType |
-            TypeVar Var
+-- | Simple types, consisting of Arrow types (T -> T') and type variables.
+data Type = Arrow Type Type |
+            TypeVar TVar
             deriving (Eq)
 
-instance Show SType where
+instance Show Type where
     show (Arrow t t') = '(' : (show t) ++ " -> " ++ (show t') ++ ")"
     show (TypeVar v) = show v
 
-data STLNTerm =     BVar Nat |
-                    FVar T.Atom |
-                    Lam SType STLNTerm |
-                    App STLNTerm STLNTerm
-                    deriving (Eq)
+-- | Terms in STLC, using type annotations on lambda binders to ensure all 
+-- properly typed terms can have their full type determined.
+data Term = BVar Nat |
+            FVar T.Atom |
+            Lam Type Term |
+            App Term Term
+            deriving (Eq)
 
-instance Show STLNTerm where
+instance Show Term where
     show (BVar n) = show n
     show (FVar n) = 'f' : (show n)
     show (Lam ty t) = '\\' : ':' : (show ty) ++ ".(" ++ (show t) ++ ")"
     show (App t t') = '(' : ((show t) ++ " " ++ (show t') ++ ")")
 
-freeVars :: STLNTerm -> [T.Atom]
+freeVars :: Term -> [T.Atom]
 freeVars (BVar _) = []
 freeVars (FVar a) = [a]
 freeVars (Lam _ t) = freeVars t
 freeVars (App t t') = (freeVars t) ++ (freeVars t')
 
-open :: STLNTerm -> T.Atom -> STLNTerm -> STLNTerm
+open :: Term -> T.Atom -> Term -> Term
 open t n (BVar n') = if n == n' then t else BVar n'
 open _ _ (FVar a) = FVar a
 open t n (Lam ty t') = Lam ty $ open t (Succ n) t'
 open t n (App t' t'') = App (open t n t') (open t n t'')
 
-type Context = (Map.Map T.Atom SType, [T.Atom])
+-- | Represents typing context for STLC terms, used to store variable 
+-- references and their associated type for looking up during type-checking.  
+-- Also stores a list of "fresh" variables for variable opening.
+type Context = (Map.Map T.Atom Type, [T.Atom])
 
 emptyContext :: Context
 emptyContext = (Map.empty, allNats)
 
-newContext :: [(T.Atom, SType)] -> Context
+-- | Adds the given list of atom,type pairs to an empty context.
+newContext :: [(T.Atom, Type)] -> Context
 newContext l = foldr helper emptyContext l
     where
-        helper :: (T.Atom, SType) -> Context -> Context
+        helper :: (T.Atom, Type) -> Context -> Context
         helper (a,ty) c = addToContext a ty $ removeAtomFromFresh a c
 
 removeAtomFromFresh :: T.Atom -> Context -> Context
 removeAtomFromFresh a c = second (\x -> delete a x) c
 
-atomLookup :: T.Atom -> Context -> Maybe SType
+atomLookup :: T.Atom -> Context -> Maybe Type
 atomLookup a (m, _) = Map.lookup a m
 
-addToContext :: T.Atom -> SType -> Context -> Context
+-- Should I remove atoms here instead of in newContext?
+addToContext :: T.Atom -> Type -> Context -> Context
 addToContext a ty c = first (\x -> Map.insert a ty x) c
 
 freshFVar :: Context -> (T.Atom, Context)
 freshFVar (m,(x:xs)) = (x,(m,xs))
 freshFVar _ = error "Out of free variable names, somehow."
 
-stripType :: STLNTerm -> T.LNTerm
-stripType = undefined
+stripType :: Term -> T.Term
+stripType (BVar n) = T.BVar n
+stripType (FVar a) = T.FVar a
+stripType (Lam _ t) = T.Lam $ stripType t
+stripType (App t t') = T.App (stripType t) (stripType t')
 
-isLocallyClosed :: STLNTerm -> Bool
-isLocallyClosed = undefined
-
-typeCheck :: STLNTerm -> Context -> Either String SType
+-- | Generates types from annotated STLC terms, or returns an error if the 
+-- type annotations or term are incorrect.
+typeCheck :: Term -> Context -> Either String Type
 typeCheck t c = typeCheck' t c
 
-typeCheck' :: STLNTerm -> Context -> Either String SType
-typeCheck' (BVar _) _ = Left "Invalid type, reached bound variable."
+typeCheck' :: Term -> Context -> Either String Type
+typeCheck' (BVar _) _ = Left "Reached bound variable, term was not locally closed."
 typeCheck' (FVar a) c = maybe left right $ atomLookup a c
     where
         left = Left "Variable did not exist in the context."
@@ -116,3 +133,4 @@ typeCheck' (App t t') c =
 exampleContext = newContext [(Zero, TypeVar 'T')]
 exampleTerm = (App (Lam (TypeVar 'T') (BVar Zero)) (FVar Zero))
 exampleBadTerm = (App (Lam (TypeVar 'V') (BVar Zero)) (FVar Zero))
+

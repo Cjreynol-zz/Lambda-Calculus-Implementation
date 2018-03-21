@@ -1,5 +1,12 @@
-module LNTerm(
-    LNTerm(..),
+{-|
+Module      : Pure.Term
+Description : Pure lambda calculus terms, implemented using a locally nameless 
+                representation
+Copyright   : (c) Chad Reynolds, 2018
+License     : MIT
+-}
+module Pure.Term(
+    Term(..),
     Atom,
     locallyClosedCheck
     ) where
@@ -11,23 +18,23 @@ import              Nat                 (Nat(..))
 
 type Atom = Nat
 
-data LNTerm =   BVar Nat |
+data Term =   BVar Nat |
                 FVar Atom |
-                Lam LNTerm |
-                App LNTerm LNTerm
+                Lam Term |
+                App Term Term
                 deriving (Eq)
 
-instance L.LambdaTerm LNTerm where
-    redexExists = LNTerm.redexExists
-    betaReduce = LNTerm.betaReduce
+instance L.LambdaTerm Term where
+    redexExists = redexExists
+    betaReduce = betaReduce
 
-instance Show LNTerm where
+instance Show Term where
     show (BVar n) = show n
     show (FVar a) = 'f' : (show a)
     show (Lam t) = '\\' : '.' : '(' : ((show t) ++ ")")
     show (App t t') = '(' : ((show t) ++ " " ++ (show t') ++ ")")
 
-betaReduce :: LNTerm -> LNTerm
+betaReduce :: Term -> Term
 betaReduce (BVar n) = BVar n
 betaReduce (FVar a) = FVar a
 betaReduce (Lam t) = Lam $ betaReduce t
@@ -36,23 +43,23 @@ betaReduce (App t t')
     | redexExists t = App (betaReduce t) t'
     | otherwise = App t $ betaReduce t'
 
-redexExists :: LNTerm -> Bool
+redexExists :: Term -> Bool
 redexExists (BVar _) = False
 redexExists (FVar _) = False
 redexExists (Lam t) = redexExists t
 redexExists (App (Lam _) _) = True
 redexExists (App t t') = (redexExists t) || (redexExists t')
 
-open :: LNTerm -> Atom -> LNTerm -> LNTerm
+open :: Term -> Atom -> Term -> Term
 open t n (BVar n') = if n == n' then t else BVar n'
 open _ _ (FVar a) = FVar a
 open t n (Lam t') = Lam $ open t (Succ n) t'
 open t n (App t' t'') = App (open t n t') (open t n t'')
 
-isLocallyClosed :: LNTerm -> Bool
+isLocallyClosed :: Term -> Bool
 isLocallyClosed t = isLocallyClosed' Zero t
 
-isLocallyClosed' :: Nat -> LNTerm -> Bool
+isLocallyClosed' :: Nat -> Term -> Bool
 isLocallyClosed' n (BVar n') = n > n'
 isLocallyClosed' _ (FVar _) = True
 isLocallyClosed' n (Lam t') = isLocallyClosed' (Succ n) t'
@@ -60,7 +67,7 @@ isLocallyClosed' n (App t' t'') = (isLocallyClosed' n t') && (isLocallyClosed' n
 
 -- | Error checking for terms to ensure they are locally closed.  Used for 
 -- parsing terms.
-locallyClosedCheck :: LNTerm -> Either String LNTerm
+locallyClosedCheck :: Term -> Either String Term
 locallyClosedCheck t
     | isLocallyClosed t = Right t
     | otherwise = Left "Invalid term, not locally closed.  Check bound variable indices."

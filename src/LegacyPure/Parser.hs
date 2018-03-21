@@ -1,10 +1,10 @@
 {-|
-Module      : Parser
+Module      : LegacyPure.Parser
 Description : Parsing functions for Terms
 Copyright   : (c) Chad Reynolds, 2018
 License     : MIT
 -}
-module Parser(
+module LegacyPure.Parser(
     termParser
     ) where
 
@@ -13,7 +13,7 @@ import Data.Char            (digitToInt)
 import Text.Parsec          (ParseError, char, digit, many1, parse, (<|>))
 import Text.Parsec.String   (Parser)
 
-import Term                 (Term(..))
+import LegacyPure.Term          (Term(..))
 import Nat                  (intToNat) 
 
 
@@ -57,3 +57,4 @@ parseTerms = do
 -- which is a beta redex.
 termParser :: String -> Either ParseError Term
 termParser input = parse parseTerms "" input
+
