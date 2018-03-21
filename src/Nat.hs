@@ -6,6 +6,7 @@ License     : MIT
 -}
 module Nat(
     Nat(..),
+    Atom,
     allNats,
     intToNat,
     natAdd,
@@ -36,6 +37,9 @@ instance Ord Nat where
     compare (Succ _) (Zero) = GT
     compare (Zero) (Succ _) = LT
     compare (Succ n) (Succ m) = compare n m
+
+-- | Type for free variable labels, to help distinguish from bound variables
+type Atom = Nat
 
 -- | Infinite list of all the natural numbers in increasing order from Zero.
 allNats :: [Nat]

@@ -10,5 +10,6 @@ module Pure(
     termParser
     ) where
 
-import Pure.Term
+
 import Pure.Parser
+import Pure.Term

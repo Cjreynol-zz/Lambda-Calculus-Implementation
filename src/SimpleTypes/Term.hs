@@ -1,42 +1,27 @@
 {-|
 Module      : SimpleTypes.Term
-Description : Terms(and other types) for STLC
+Description : Lambda terms  and type checker for STLC
 Copyright   : (c) Chad Reynolds, 2018
 License     : MIT
 -}
 module SimpleTypes.Term(
     Term(..),
-    Type(..),
-    Context,
-    newContext,
+    stripTypes,
     typeCheck
     ) where
 
 
-import              Data.Bifunctor          (first, second)
-import              Data.List               (delete)
-import qualified    Data.Map.Strict as Map  (Map, empty, insert, lookup)
+import              Nat                         (Nat(..), Atom)
+import qualified    Pure.Term           as Pure (Term(..))
+import              SimpleTypes.Context         (Context, addToContext, 
+                                                    atomLookup, freshFVar)
+import              SimpleTypes.Type            (Type(..))
 
-import qualified    Pure.Term       as T    (Term(..), Atom)
-import              Nat                     (Nat(..), allNats)
-
-
--- | Alias used for type variables.
-type TVar = Char
-
--- | Simple types, consisting of Arrow types (T -> T') and type variables.
-data Type = Arrow Type Type |
-            TypeVar TVar
-            deriving (Eq)
-
-instance Show Type where
-    show (Arrow t t') = '(' : (show t) ++ " -> " ++ (show t') ++ ")"
-    show (TypeVar v) = show v
 
 -- | Terms in STLC, using type annotations on lambda binders to ensure all 
 -- properly typed terms can have their full type determined.
 data Term = BVar Nat |
-            FVar T.Atom |
+            FVar Atom |
             Lam Type Term |
             App Term Term
             deriving (Eq)
@@ -47,46 +32,11 @@ instance Show Term where
     show (Lam ty t) = '\\' : ':' : (show ty) ++ ".(" ++ (show t) ++ ")"
     show (App t t') = '(' : ((show t) ++ " " ++ (show t') ++ ")")
 
-open :: Term -> T.Atom -> Term -> Term
+open :: Term -> Atom -> Term -> Term
 open t n (BVar n') = if n == n' then t else BVar n'
 open _ _ (FVar a) = FVar a
 open t n (Lam ty t') = Lam ty $ open t (Succ n) t'
 open t n (App t' t'') = App (open t n t') (open t n t'')
-
--- | Represents typing context for STLC terms, used to store variable 
--- references and their associated type for looking up during type-checking.  
--- Also stores a list of "fresh" variables for variable opening.
-type Context = (Map.Map T.Atom Type, [T.Atom])
-
-emptyContext :: Context
-emptyContext = (Map.empty, allNats)
-
--- | Adds the given list of atom,type pairs to an empty context.
-newContext :: [(T.Atom, Type)] -> Context
-newContext l = foldr helper emptyContext l
-    where
-        helper :: (T.Atom, Type) -> Context -> Context
-        helper (a,ty) c = addToContext a ty $ removeAtomFromFresh a c
-
-removeAtomFromFresh :: T.Atom -> Context -> Context
-removeAtomFromFresh a c = second (\x -> delete a x) c
-
-atomLookup :: T.Atom -> Context -> Maybe Type
-atomLookup a (m, _) = Map.lookup a m
-
--- Should I remove atoms here instead of in newContext?
-addToContext :: T.Atom -> Type -> Context -> Context
-addToContext a ty c = first (\x -> Map.insert a ty x) c
-
-freshFVar :: Context -> (T.Atom, Context)
-freshFVar (m,(x:xs)) = (x,(m,xs))
-freshFVar _ = error "Out of free variable names, somehow."
-
-stripType :: Term -> T.Term
-stripType (BVar n) = T.BVar n
-stripType (FVar a) = T.FVar a
-stripType (Lam _ t) = T.Lam $ stripType t
-stripType (App t t') = T.App (stripType t) (stripType t')
 
 -- | Generates types from annotated STLC terms, or returns an error if the 
 -- type annotations or term are incorrect.
@@ -123,4 +73,11 @@ typeCheck' (App t t') c =
         noArrow = Left "Attempting to apply argument to non-arrow type"
         ty1 = typeCheck' t c
         ty2 = typeCheck' t' c
+
+-- | Convert STLC terms to untyped terms, for reduction
+stripTypes :: Term -> Pure.Term
+stripTypes (BVar n) = Pure.BVar n
+stripTypes (FVar a) = Pure.FVar a
+stripTypes (Lam _ t) = Pure.Lam $ stripTypes t
+stripTypes (App t t') = Pure.App (stripTypes t) (stripTypes t')
 

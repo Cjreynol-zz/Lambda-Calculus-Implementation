@@ -9,9 +9,13 @@ module SimpleTypes(
     Type(..),
     Context,
     newContext,
+    stripTypes,
     typeCheck,
     termParser
     ) where
 
-import SimpleTypes.Term
+
+import SimpleTypes.Context
 import SimpleTypes.Parser
+import SimpleTypes.Term
+import SimpleTypes.Type

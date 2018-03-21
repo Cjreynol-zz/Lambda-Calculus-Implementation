@@ -7,17 +7,13 @@ License     : MIT
 -}
 module Pure.Term(
     Term(..),
-    Atom,
     locallyClosedCheck
     ) where
 
 
 import qualified    LambdaTerm as L     (LambdaTerm(..))
-import              Nat                 (Nat(..))
+import              Nat                 (Nat(..), Atom)
 
-
--- | Type for free variable labels, to help distinguish from bound variables
-type Atom = Nat
 
 -- | Untyped lambda terms using the locally nameless representation.
 --

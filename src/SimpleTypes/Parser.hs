@@ -15,10 +15,10 @@ import Text.Parsec          (ParseError, char, digit, letter, many, many1,
                                 parse, (<|>))
 import Text.Parsec.String   (Parser)
 
-import Pure.Term            (Atom)
-import SimpleTypes.Term     (Term(..), Type(..), Context, typeCheck, 
-                                newContext)
-import Nat                  (intToNat) 
+import Nat                  (Atom, intToNat)
+import SimpleTypes.Context  (Context, newContext)
+import SimpleTypes.Term     (Term(..), typeCheck)
+import SimpleTypes.Type     (Type(..))
 
 
 parseContext :: Parser Context

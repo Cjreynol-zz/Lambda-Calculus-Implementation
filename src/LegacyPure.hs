@@ -1,7 +1,7 @@
 {-|
 Module      : LegacyPure
-Description : No longer needed De Bruijn indexed untyped lambda calculus 
-                implementation
+Description : Older implementation of De Bruijn indexed untyped lambda 
+                calculus, kept around because it still works
 Copyright   : (c) Chad Reynolds, 2018
 License     : MIT
 -}
@@ -10,5 +10,6 @@ module LegacyPure(
     termParser
     ) where
 
-import LegacyPure.Term
+
 import LegacyPure.Parser
+import LegacyPure.Term
