@@ -10,17 +10,16 @@ module Main(
 
 
 import LambdaTerm   (showReductionSteps)
-import LNParser       (lnTermParser)
+import LNParser     (lnTermParser)
 
 
 -- | Main loop of execution. 
 -- 
--- Prompts for a lambda term written using standard De Bruijn notation and 
--- the '\' char for lambdas.  The term will then be reduced to normal form 
+-- Prompts for a lambda term.  The term will then be reduced to normal form 
 -- and the full step-by-step reduction sequence will be displayed.
 main :: IO ()
 main = do
-        putStrLn "Please enter a lambda term:  "
+        putStrLn "\nPlease enter a lambda term:  "
         input <- getLine
         putStrLn "Reduction sequence:"
         processInput input
@@ -30,5 +29,6 @@ processInput :: String -> IO ()
 processInput input = 
     case (lnTermParser input) of
         (Left err) -> putStrLn (show err)
-        (Right t) -> putStrLn $ showReductionSteps t
+        (Right (Left err)) -> putStrLn err
+        (Right (Right t)) -> putStrLn $ showReductionSteps t
 

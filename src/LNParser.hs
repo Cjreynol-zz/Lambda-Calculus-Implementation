@@ -3,11 +3,12 @@ module LNParser(
     ) where
 
 
+import Data.Bifunctor       (second)
 import Data.Char            (digitToInt)
 import Text.Parsec          (ParseError, char, digit, many1, parse, (<|>))
 import Text.Parsec.String   (Parser)
 
-import LNTerm               (LNTerm(..))
+import LNTerm               (LNTerm(..), locallyClosedCheck)
 import Nat                  (intToNat) 
 
 
@@ -45,6 +46,17 @@ parseLNTerms = do
                 return $ foldl1 App applications
 
 -- | Parser for LNTerms.  
--- Need to add check for isLocallyClosed.
-lnTermParser :: String -> Either ParseError LNTerm
-lnTermParser input = parse parseLNTerms "" input
+--
+-- No spaces, \\ . to represent lambda binders.  Bound variables are 
+-- represented as natural numbers referencing their binder.  Free variables 
+-- are also represented by natural numbers, but with an 'f' character 
+-- preceding them.  Application is implicit with adjacent terms, and 
+-- parenthesis can be used to end the binding scope of a lambda.  
+-- 
+-- For example:  
+-- 
+-- \\ .00 is equivalent to (\\ .(0 0)) while (\\ .0)f0 is equivalent to 
+-- (\\ .0) 0), which is a beta redex where the 0 outside the lambda 
+-- abstraction is a free variable.
+lnTermParser :: String -> Either ParseError (Either String LNTerm)
+lnTermParser input = second locallyClosedCheck $ parse parseLNTerms "" input

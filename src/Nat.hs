@@ -6,6 +6,7 @@ License     : MIT
 -}
 module Nat(
     Nat(..),
+    allNats,
     intToNat,
     natAdd,
     natToInt,
@@ -35,6 +36,9 @@ instance Ord Nat where
     compare (Succ _) (Zero) = GT
     compare (Zero) (Succ _) = LT
     compare (Succ n) (Succ m) = compare n m
+
+allNats :: [Nat]
+allNats = iterate (\x -> Succ x) Zero
 
 -- | Nat - 1 operation, with a lower bound of Zero.
 natPred :: Nat -> Nat

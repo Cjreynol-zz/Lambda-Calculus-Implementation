@@ -1,6 +1,7 @@
 module LNTerm(
     LNTerm(..),
-    isLocallyClosed,
+    Atom,
+    locallyClosedCheck
     ) where
 
 
@@ -22,13 +23,13 @@ instance L.LambdaTerm LNTerm where
 
 instance Show LNTerm where
     show (BVar n) = show n
-    show (FVar n) = 'f' : (show n)
+    show (FVar a) = 'f' : (show a)
     show (Lam t) = '\\' : '.' : '(' : ((show t) ++ ")")
     show (App t t') = '(' : ((show t) ++ " " ++ (show t') ++ ")")
 
 betaReduce :: LNTerm -> LNTerm
 betaReduce (BVar n) = BVar n
-betaReduce (FVar n) = FVar n
+betaReduce (FVar a) = FVar a
 betaReduce (Lam t) = Lam $ betaReduce t
 betaReduce (App (Lam t) t') = open t' Zero t
 betaReduce (App t t') 
@@ -42,18 +43,25 @@ redexExists (Lam t) = redexExists t
 redexExists (App (Lam _) _) = True
 redexExists (App t t') = (redexExists t) || (redexExists t')
 
-open :: LNTerm -> Nat -> LNTerm -> LNTerm
+open :: LNTerm -> Atom -> LNTerm -> LNTerm
 open t n (BVar n') = if n == n' then t else BVar n'
-open t n (FVar n') = FVar n'
+open _ _ (FVar a) = FVar a
 open t n (Lam t') = Lam $ open t (Succ n) t'
 open t n (App t' t'') = App (open t n t') (open t n t'')
 
 isLocallyClosed :: LNTerm -> Bool
 isLocallyClosed t = isLocallyClosed' Zero t
-    where
-        isLocallyClosed' :: Nat -> LNTerm -> Bool
-        isLocallyClosed' n (BVar n') = n > n'
-        isLocallyClosed' n (FVar _) = True
-        isLocallyClosed' n (Lam t) = isLocallyClosed' (Succ n) t
-        isLocallyClosed' n (App t t') = (isLocallyClosed' n t) && (isLocallyClosed' n t')
+
+isLocallyClosed' :: Nat -> LNTerm -> Bool
+isLocallyClosed' n (BVar n') = n > n'
+isLocallyClosed' _ (FVar _) = True
+isLocallyClosed' n (Lam t') = isLocallyClosed' (Succ n) t'
+isLocallyClosed' n (App t' t'') = (isLocallyClosed' n t') && (isLocallyClosed' n t'')
+
+-- | Error checking for terms to ensure they are locally closed.  Used for 
+-- parsing terms.
+locallyClosedCheck :: LNTerm -> Either String LNTerm
+locallyClosedCheck t
+    | isLocallyClosed t = Right t
+    | otherwise = Left "Invalid term, not locally closed.  Check bound variable indices."
 
