@@ -32,10 +32,10 @@ import Text.Parsec                  (ParseError, char, digit, letter, many,
                                         many1, parse, string, (<|>))
 import Text.Parsec.String           (Parser)
 
+import LambdaTerm                   (LambdaTerm(..))
 import Nat                          (Atom, intToNat)
-import qualified Pure.Term  as Pure (Term)
 import SimpleTypes.Context          (Context, newContext)
-import SimpleTypes.Term             (Term(..), typeCheckAndRemove)
+import SimpleTypes.Term             (Term, typeCheckAndTerm)
 import SimpleTypes.Type             (Type(..))
 import SimpleTypes.TypingError      (ErrorString)
 
@@ -130,5 +130,6 @@ termParser input = parse parseAll "" input
 
 -- | Composes parsing and checking terms, returns the result or an error to 
 -- display.
-termParserChecker :: String -> Either ErrorString (Type,Pure.Term)
-termParserChecker input = first show (termParser input) >>= (\x -> first show (uncurry typeCheckAndRemove x))
+termParserChecker :: String -> Either ErrorString (Type,Term)
+termParserChecker input = first show (termParser input) >>= (\x -> first show (uncurry typeCheckAndTerm x))
+

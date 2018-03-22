@@ -7,10 +7,11 @@ License     : MIT
 -}
 module LegacyPure.Term(
     Term(..),
+    betaReduce,
+    normalize
     ) where
 
 
-import qualified    LambdaTerm as L     (LambdaTerm(..))
 import              Nat                 (Nat(..), natAdd, natPred)
 
 
@@ -18,17 +19,23 @@ import              Nat                 (Nat(..), natAdd, natPred)
 data Term = Var Nat | 
             Lam Term | 
             App Term Term
-    deriving (Eq)
-
-instance L.LambdaTerm Term where
-    redexExists = redexExists
-    betaReduce = betaReduce
 
 instance Show Term where
     show (Var n) = show n
     show (Lam t) = "(\\." ++ (show t) ++ ")"
     show (App t t') = "(" ++ (show t) ++ " " ++ (show t') ++ ")"
 
+instance Eq Term where
+    (==) t1 t2 = treeEq (normalize t1) (normalize t2)
+
+treeEq :: Term -> Term -> Bool
+treeEq (Var n) (Var n') = if n == n' then True else False
+treeEq (Lam t) (Lam t') = treeEq t t'
+treeEq (App t1 t2) (App t1' t2') = treeEq t1 t1' && (treeEq t2 t2')
+treeEq _ _ = False
+
+-- | Reduces a term one step using leftmost reduction to guarantee reaching a 
+-- normal form if it exists.
 betaReduce :: Term -> Term
 betaReduce (Var n) = Var n
 betaReduce (Lam t) = Lam (betaReduce t)
@@ -63,3 +70,8 @@ rename m i (Var j)
 rename m i (App t1 t2) = App (rename m i t1) (rename m i t2)
 rename m i (Lam t) = Lam (rename m (Succ i) t)
 
+-- | Beta reduces until a normal form is reached.
+normalize :: Term -> Term
+normalize t
+    | redexExists t = normalize $ betaReduce t
+    | otherwise = t

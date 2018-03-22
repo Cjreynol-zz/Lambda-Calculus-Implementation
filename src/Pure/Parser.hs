@@ -20,8 +20,9 @@ import Data.Char                (digitToInt)
 import Text.Parsec              (ParseError, char, digit, many1, parse, (<|>))
 import Text.Parsec.String       (Parser)
 
+import LambdaTerm               (LambdaTerm(..))
 import Nat                      (intToNat) 
-import Pure.Term                (Term(..), locallyClosedCheck)
+import Pure.Term                (Term, locallyClosedCheck)
 import SimpleTypes.TypingError  (ErrorString)
 
 
@@ -30,7 +31,7 @@ parseLam = do
             _ <- char '\\'
             _ <- char '.'
             term <- parseTerms
-            return $ Lam term
+            return $ Lam () term
 
 parseBVar :: Parser Term
 parseBVar = do
