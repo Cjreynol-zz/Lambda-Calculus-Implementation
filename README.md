@@ -1,7 +1,9 @@
 # Lambda Calculus  
-This project is an implementation of untyped lambda calculus.  Terms are 
+This project is an implementation of different lambda calculi.  Terms are 
 implemented using locally nameless representation, as described in 
-[this paper](https://www.chargueraud.org/research/2009/ln/main.pdf).  
+[this paper](https://www.chargueraud.org/research/2009/ln/main.pdf).  So far, 
+the project includes pure, untyped lambda calculus and the simply typed 
+lambda calculus.
 
 ## Build
 This project has most recently been most recently tested using GHC 8.4.1, and 
@@ -21,17 +23,30 @@ Documentation for the source modules can be generated using `cabal haddock
 Running the `hask-lambda` executable will bring up a prompt to enter in a lambda 
 term to be reduced.  From the parser documentation:
 
-> No spaces, \\. to represent lambda binders.  Bound variables are 
-> represented as natural numbers referencing their binder.  Free variables 
-> are also represented by natural numbers, but with an 'f' character 
-> preceding them.  Application is implicit with adjacent terms, and 
-> parenthesis can be used to end the binding scope of a lambda.  
+> A typing context is expected first, wrapped in square brackets [].  
+> The elements inside are pairs (n,type) where n is a natural number and 
+> type is a valid type.  Consecutive pairs do not have any delimiter, and 
+> in the case of multiple pairs containing the same number n, the type 
+> associated with that variable in the context will be the last in the list.
+>
+> Types are expected to be characters, typically uppercase, separated by 
+> arrows, ->.
+>
+> For terms, no spaces, \\:type. to represent lambda binders.  Bound 
+> variables are represented as natural numbers referencing their binder as is 
+> standard in De Bruijn notation.  Free variables are also represented by 
+> natural numbers, but with an 'f' preceding them.  Application is implicit 
+> with adjacent terms, and parenthesis can be used to end the binding scope 
+> of a lambda.  
 > 
 > For example:  
 > 
-> `\.00` is equivalent to `(\.(0 0))` while `(\.0)f0` is equivalent to 
-> `(\.0) 0)`, which is a beta redex where the 0 outside the lambda 
-> abstraction is a free variable.
+> `[]|-\:T.0` is equivalent to `(\.(0))` checked in an empty context.
+>
+> `[(0,S->T)(1,S)]|-f0f1` is equivalent to `(0 1)` checked in the context where
+> 0 is a function from S to T and 1 is of type S.
 
-After a term is entered, if it terminates a reduction sequence to its normal 
-form will be displayed.  Non-terminating terms cause an infinite loop
+After a term is entered, if it terminates, a reduction sequence to its normal 
+form will be displayed.  Non-terminating terms cause an infinite loop.  When 
+inputting typed lambda terms, the term and type will be displayed and the 
+reduction to normal form will be displayed.

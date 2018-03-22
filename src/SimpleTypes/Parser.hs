@@ -122,12 +122,12 @@ parseAll = do
 -- Types are expected to be characters, typically uppercase, separated by 
 -- arrows, ->.
 --
--- For terms, no spaces, \\ . to represent lambda binders.  Bound variables 
--- are represented as natural numbers referencing their binder as is standard 
--- in De Bruijn notation.  Free variables are also represented by natural 
--- numbers, but with an 'f' preceding them.  Application is implicit with 
--- adjacent terms, and parenthesis can be used to end the binding scope of a 
--- lambda.  
+-- For terms, no spaces, \\:type. to represent lambda binders.  Bound 
+-- variables are represented as natural numbers referencing their binder as is 
+-- standard in De Bruijn notation.  Free variables are also represented by 
+-- natural numbers, but with an 'f' preceding them.  Application is implicit 
+-- with adjacent terms, and parenthesis can be used to end the binding scope 
+-- of a lambda.  
 -- 
 -- For example:  
 -- 
