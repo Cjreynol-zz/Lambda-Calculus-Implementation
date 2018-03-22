@@ -10,7 +10,7 @@ module Main(
 
 
 import LambdaTerm           (showReductionSteps)
-import SimpleTypes.Parser   (termParser)
+import SimpleTypes.Parser   (termParserChecker)
 
 
 -- | Main loop of execution. 
@@ -26,8 +26,8 @@ main = do
 
 processInput :: String -> IO ()
 processInput input = 
-    case (termParser input) of
-        (Left err) -> putStrLn (show err)
+    case (termParserChecker input) of
+        (Left errStr) -> putStrLn errStr
         (Right (ty,t)) -> do
                             putStrLn $ (show t) ++ " : " ++ (show ty)
                             putStrLn $ showReductionSteps t

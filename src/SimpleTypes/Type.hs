@@ -15,7 +15,11 @@ type TVar = Char
 -- | Simple types, consisting of Arrow types (T -> T') and type variables.
 data Type = Arrow Type Type |
             TypeVar TVar
-            deriving (Eq)
+
+instance Eq Type where
+    (==) (Arrow t1 t2) (Arrow t1' t2') = t1 == t2 && (t1' == t2')
+    (==) (TypeVar _) (TypeVar _) = True
+    (==) _ _ = False
 
 instance Show Type where
     show (Arrow t t') = '(' : (show t) ++ " -> " ++ (show t') ++ ")"

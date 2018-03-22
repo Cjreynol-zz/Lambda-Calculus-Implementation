@@ -6,10 +6,11 @@ Copyright   : (c) Chad Reynolds, 2018
 License     : MIT
 -}
 module Pure(
-    Term(..),
-    termParser
+    module Pure.Parser,
+    module Pure.Term
     ) where
 
 
 import Pure.Parser
 import Pure.Term
+

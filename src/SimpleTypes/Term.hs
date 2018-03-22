@@ -6,6 +6,7 @@ License     : MIT
 -}
 module SimpleTypes.Term(
     Term(..),
+    typedBetaEq,
     removeTypes,
     typeCheck,
     typeCheckAndRemove
@@ -26,7 +27,16 @@ data Term = BVar Nat |
             FVar Atom |
             Lam Type Term |
             App Term Term
-            deriving (Eq)
+
+-- | Beta equality of STLC terms, dependent on a given typing context.  If 
+-- the types are valid and equal, then the terms are reduced to pure LC terms 
+-- and compared.
+typedBetaEq :: Context -> Term -> Term -> Bool
+typedBetaEq c t1 t2 = tyChF t1 && (tyChF t2) && (pT1 == pT2)
+    where 
+        tyChF t = either (\_ -> False) (\_ -> True) (typeCheck t c)
+        pT1 = removeTypes t1
+        pT2 = removeTypes t2
 
 instance Show Term where
     show (BVar n) = show n

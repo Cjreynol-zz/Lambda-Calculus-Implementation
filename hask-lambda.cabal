@@ -1,5 +1,5 @@
 name:                hask-lambda
-version:             0.2.0.0
+version:             0.3.0.0
 synopsis:            Lambda calculus implementation
 -- description:         
 license:             MIT
@@ -21,11 +21,14 @@ executable hask-lambda
   main-is:             Main.hs
   
   other-modules:        LambdaTerm,
+                        LegacyPure,
                         LegacyPure.Parser,
                         LegacyPure.Term,
                         Nat,
+                        Pure,
                         Pure.Parser,
                         Pure.Term,
+                        SimpleTypes,
                         SimpleTypes.Context,
                         SimpleTypes.Parser,
                         SimpleTypes.Term,

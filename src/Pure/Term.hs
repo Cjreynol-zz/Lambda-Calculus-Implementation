@@ -25,7 +25,16 @@ data Term = BVar Nat |
             FVar Atom |
             Lam Term |
             App Term Term
-            deriving (Eq)
+
+instance Eq Term where
+    (==) t1 t2 = treeEq (betaReduce t1) (betaReduce t2)
+
+treeEq :: Term -> Term -> Bool
+treeEq (BVar n) (BVar n') = if n == n' then True else False
+treeEq (FVar a) (FVar a') = if a == a' then True else False
+treeEq (Lam t) (Lam t') = treeEq t t'
+treeEq (App t1 t2) (App t1' t2') = treeEq t1 t1' && (treeEq t2 t2')
+treeEq _ _ = False
 
 instance L.LambdaTerm Term where
     redexExists = redexExists

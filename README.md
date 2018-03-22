@@ -38,13 +38,6 @@ term to be reduced.  From the parser documentation:
 > natural numbers, but with an 'f' preceding them.  Application is implicit 
 > with adjacent terms, and parenthesis can be used to end the binding scope 
 > of a lambda.  
-> 
-> For example:  
-> 
-> `[]|-\:T.0` is equivalent to `(\.(0))` checked in an empty context.
->
-> `[(0,S->T)(1,S)]|-f0f1` is equivalent to `(0 1)` checked in the context where
-> 0 is a function from S to T and 1 is of type S.
 
 After a term is entered, if it terminates, a reduction sequence to its normal 
 form will be displayed.  Non-terminating terms cause an infinite loop.  When 

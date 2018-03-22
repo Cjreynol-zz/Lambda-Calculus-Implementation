@@ -6,10 +6,11 @@ Copyright   : (c) Chad Reynolds, 2018
 License     : MIT
 -}
 module LegacyPure(
-    Term(..),
-    termParser
+    module LegacyPure.Parser,
+    module LegacyPure.Term
     ) where
 
 
 import LegacyPure.Parser
 import LegacyPure.Term
+
