@@ -29,7 +29,8 @@ executable hask-lambda
                         SimpleTypes.Context,
                         SimpleTypes.Parser,
                         SimpleTypes.Term,
-                        SimpleTypes.Type
+                        SimpleTypes.Type,
+                        SimpleTypes.TypingError
   
   -- other-extensions:    
   

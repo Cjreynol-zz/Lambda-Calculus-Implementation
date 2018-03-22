@@ -9,8 +9,8 @@ module Main(
     ) where
 
 
-import LambdaTerm   (showReductionSteps)
-import Pure.Parser  (termParser)
+import LambdaTerm           (showReductionSteps)
+import SimpleTypes.Parser   (termParser)
 
 
 -- | Main loop of execution. 
@@ -21,7 +21,6 @@ main :: IO ()
 main = do
         putStrLn "\nPlease enter a lambda term:  "
         input <- getLine
-        putStrLn "Reduction sequence:"
         processInput input
         main
 
@@ -29,6 +28,6 @@ processInput :: String -> IO ()
 processInput input = 
     case (termParser input) of
         (Left err) -> putStrLn (show err)
-        (Right (Left err)) -> putStrLn err
-        (Right (Right t)) -> putStrLn $ showReductionSteps t
-
+        (Right (ty,t)) -> do
+                            putStrLn $ (show t) ++ " : " ++ (show ty)
+                            putStrLn $ showReductionSteps t

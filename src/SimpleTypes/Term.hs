@@ -6,8 +6,9 @@ License     : MIT
 -}
 module SimpleTypes.Term(
     Term(..),
-    stripTypes,
-    typeCheck
+    removeTypes,
+    typeCheck,
+    typeCheckAndRemove
     ) where
 
 
@@ -16,6 +17,7 @@ import qualified    Pure.Term           as Pure (Term(..))
 import              SimpleTypes.Context         (Context, addToContext, 
                                                     atomLookup, freshFVar)
 import              SimpleTypes.Type            (Type(..))
+import              SimpleTypes.TypingError     (TypingError(..))
 
 
 -- | Terms in STLC, using type annotations on lambda binders to ensure all 
@@ -40,14 +42,14 @@ open t n (App t' t'') = App (open t n t') (open t n t'')
 
 -- | Generates types from annotated STLC terms, or returns an error if the 
 -- type annotations or term are incorrect.
-typeCheck :: Term -> Context -> Either String Type
+typeCheck :: Term -> Context -> Either TypingError Type
 typeCheck t c = typeCheck' t c
 
-typeCheck' :: Term -> Context -> Either String Type
-typeCheck' (BVar _) _ = Left "Reached bound variable, term was not locally closed."
+typeCheck' :: Term -> Context -> Either TypingError Type
+typeCheck' (BVar _) _ = Left $ TyErr "Reached bound variable, term was not locally closed."
 typeCheck' (FVar a) c = maybe left right $ atomLookup a c
     where
-        left = Left "Variable did not exist in the context."
+        left = Left $ TyErr "Variable did not exist in the context."
         right = (\x -> Right x)
 
 typeCheck' (Lam ty t) c = case bodyType of
@@ -69,15 +71,23 @@ typeCheck' (App t t') c =
                 _ -> ty1
         _ -> ty2
     where
-        argMismatch = Left "Argument type does not match argument to arrow type"
-        noArrow = Left "Attempting to apply argument to non-arrow type"
+        argMismatch = Left $ TyErr "Argument type does not match argument to arrow type"
+        noArrow = Left $ TyErr "Attempting to apply argument to non-arrow type"
         ty1 = typeCheck' t c
         ty2 = typeCheck' t' c
 
 -- | Convert STLC terms to untyped terms, for reduction
-stripTypes :: Term -> Pure.Term
-stripTypes (BVar n) = Pure.BVar n
-stripTypes (FVar a) = Pure.FVar a
-stripTypes (Lam _ t) = Pure.Lam $ stripTypes t
-stripTypes (App t t') = Pure.App (stripTypes t) (stripTypes t')
+removeTypes :: Term -> Pure.Term
+removeTypes (BVar n) = Pure.BVar n
+removeTypes (FVar a) = Pure.FVar a
+removeTypes (Lam _ t) = Pure.Lam $ removeTypes t
+removeTypes (App t t') = Pure.App (removeTypes t) (removeTypes t')
+
+-- | Combines type checking and removing types from the term
+typeCheckAndRemove :: Term -> Context -> Either TypingError (Type, Pure.Term)
+typeCheckAndRemove t c = case typeCheckResult of
+                            (Right ty) -> Right $ (ty,removeTypes t)
+                            (Left err) -> Left err
+    where
+        typeCheckResult = typeCheck t c
 
