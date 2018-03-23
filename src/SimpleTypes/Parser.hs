@@ -26,35 +26,31 @@ module SimpleTypes.Parser(
     ) where
 
 
-import Data.Bifunctor               (first)
-import Data.Char                    (digitToInt)
-import Text.Parsec                  (ParseError, char, digit, letter, many, 
-                                        many1, parse, string, (<|>))
-import Text.Parsec.String           (Parser)
+import              Data.Bifunctor                   (first)
+import              Text.Parsec                      (ParseError, char, 
+                                                        letter, many, parse, 
+                                                        string, (<|>))
+import              Text.Parsec.String               (Parser)
 
-import LambdaTerm                   (LambdaTerm(..))
-import Nat                          (Atom, intToNat)
-import SimpleTypes.Context          (Context, newContext)
-import SimpleTypes.Term             (Term, typeCheckAndTerm)
-import SimpleTypes.Type             (Type(..))
-import SimpleTypes.TypingError      (ErrorString)
+import              Context                          (Context)
+import              LambdaTerm                       (LambdaTerm(..))
+import qualified    Parsing.ParseableContext as PC   (ParseableContext(..))
+import              Parsing.ParseableTerm            (ParseableTerm(..))
+import              SimpleTypes.Term                 (Term, typeCheckAndTerm)
+import              SimpleTypes.Type                 (Type(..))
+import              SimpleTypes.TypingError          (ErrorString)
 
 
-parseContext :: Parser Context
-parseContext = do
-                _ <- char '['
-                pairs <- many parseContextEntry
-                _ <- string "]|-"
-                return $ newContext pairs
+instance ParseableTerm Type where
+    parseLam = do
+                _ <- string "\\:"
+                typ <- parseType -- should this be parseTypes instead?
+                _ <- char '.'
+                term <- parseTerms
+                return $ Lam typ term
 
-parseContextEntry :: Parser (Atom, Type)
-parseContextEntry = do
-                        _ <- char '('
-                        nat <- digit
-                        _ <- char ','
-                        typ <- parseTypes
-                        _ <- char ')'
-                        return ((intToNat (digitToInt nat)),typ)
+instance PC.ParseableContext Type where
+    parseTypes = parseTypes
 
 parseTypeVar :: Parser Type
 parseTypeVar = do
@@ -85,47 +81,13 @@ parseParenType = do
                     _ <- char ')'
                     return typ
 
-parseLam :: Parser Term
-parseLam = do
-            _ <- string "\\:"
-            typ <- parseType
-            _ <- char '.'
-            term <- parseTerms
-            return $ Lam typ term
-
-parseBVar :: Parser Term
-parseBVar = do
-            nat <- digit
-            return $ BVar (intToNat (digitToInt nat))
-
-parseFVar :: Parser Term
-parseFVar = do
-                _ <- char 'f'
-                nat <- digit
-                return $ FVar (intToNat (digitToInt nat))
-
-parseParenTerm :: Parser Term
-parseParenTerm = do
-                    _ <- char '('
-                    term <- parseTerms
-                    _ <- char ')'
-                    return term
-
-parseTerm :: Parser Term
-parseTerm = parseParenTerm <|> parseLam <|> parseFVar <|> parseBVar 
-
-parseTerms :: Parser Term
-parseTerms = do
-                applications <- many1 parseTerm
-                return $ foldl1 App applications
-
-parseAll :: Parser (Term,Context)
+parseAll :: Parser (Term,Context Type)
 parseAll = do
-            context <- parseContext
+            context <- PC.parseContext
             term <- parseTerms
             return (term,context)
 
-termParser :: String -> Either ParseError (Term,Context)
+termParser :: String -> Either ParseError (Term,Context Type)
 termParser input = parse parseAll "" input
 
 -- | Composes parsing and checking terms, returns the result or an error to 

@@ -20,16 +20,15 @@ source-repository head
 executable hask-lambda
   main-is:             Main.hs
   
-  other-modules:        LambdaTerm,
-                        LegacyPure,
-                        LegacyPure.Parser,
-                        LegacyPure.Term,
+  other-modules:        Context,
+                        LambdaTerm,
                         Nat,
+                        Parsing.ParseableContext,
+                        Parsing.ParseableTerm,
                         Pure,
                         Pure.Parser,
                         Pure.Term,
                         SimpleTypes,
-                        SimpleTypes.Context,
                         SimpleTypes.Parser,
                         SimpleTypes.Term,
                         SimpleTypes.Type,

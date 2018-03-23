@@ -1,6 +1,6 @@
 {-|
 Module      : LambdaTerm
-Description : Typeclass for use with command-line interface
+Description : Generic form of typed lambda terms
 Copyright   : (c) Chad Reynolds, 2018
 License     : MIT
 -}

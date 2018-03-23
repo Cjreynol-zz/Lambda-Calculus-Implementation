@@ -11,12 +11,12 @@ module SimpleTypes.Term(
     ) where
 
 
-import LambdaTerm                  (LambdaTerm(..), open)
-import Nat                         (Nat(..))
-import SimpleTypes.Context         (Context, addToContext, 
-                                                    atomLookup, freshFVar)
-import SimpleTypes.Type            (Type(..))
-import SimpleTypes.TypingError     (TypingError(..))
+import LambdaTerm                   (LambdaTerm(..), open)
+import Nat                          (Nat(..))
+import Context                      (Context, addToContext, atomLookup, 
+                                        freshFVar)
+import SimpleTypes.Type             (Type(..))
+import SimpleTypes.TypingError      (TypingError(..))
 
 
 -- | Lambda terms with simple types.
@@ -25,17 +25,17 @@ type Term = LambdaTerm Type
 -- | Beta equality of STLC terms, dependent on a given typing context.  If 
 -- the types are valid and equal, then the terms are reduced to pure LC terms 
 -- and compared.
-typedBetaEq :: Context -> Term -> Term -> Bool
+typedBetaEq :: Context Type -> Term -> Term -> Bool
 typedBetaEq c t1 t2 = tyChF t1 && (tyChF t2) && (t1 == t2)
     where 
         tyChF t = either (\_ -> False) (\_ -> True) (typeCheck t c)
 
 -- | Generates types from annotated STLC terms, or returns an error if the 
 -- type annotations or term are incorrect.
-typeCheck :: Term -> Context -> Either TypingError Type
+typeCheck :: Term -> Context Type -> Either TypingError Type
 typeCheck t c = typeCheck' t c
 
-typeCheck' :: Term -> Context -> Either TypingError Type
+typeCheck' :: Term -> Context Type -> Either TypingError Type
 typeCheck' (BVar _) _ = Left $ TyErr "Reached bound variable, term was not locally closed."
 typeCheck' (FVar a) c = maybe left right $ atomLookup a c
     where
@@ -68,6 +68,6 @@ typeCheck' (App t t') c =
 
 -- | Pairs type checking result with the term, for use after parsing to output 
 -- the relevant information.
-typeCheckAndTerm :: Term -> Context -> Either TypingError (Type,Term)
+typeCheckAndTerm :: Term -> Context Type -> Either TypingError (Type,Term)
 typeCheckAndTerm t c = typeCheck t c >>= \x -> Right (x,t)
 
