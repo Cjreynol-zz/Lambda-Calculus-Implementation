@@ -5,11 +5,11 @@ Copyright   : (c) Chad Reynolds, 2018
 License     : MIT
 -}
 module Parsing(
-    module ParseableContext,
-    module ParseableTerm
+    module Parsing.ParseableContext,
+    module Parsing.ParseableTerm
     ) where
 
 
-import ParseableContext
-import ParseableTerm
+import Parsing.ParseableContext
+import Parsing.ParseableTerm
 

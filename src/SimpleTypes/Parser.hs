@@ -44,7 +44,7 @@ import              SimpleTypes.TypingError          (ErrorString)
 instance ParseableTerm Type where
     parseLam = do
                 _ <- string "\\:"
-                typ <- parseType -- should this be parseTypes instead?
+                typ <- parseTypes 
                 _ <- char '.'
                 term <- parseTerms
                 return $ Lam typ term

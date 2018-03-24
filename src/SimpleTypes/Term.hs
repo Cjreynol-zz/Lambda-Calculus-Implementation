@@ -61,8 +61,8 @@ typeCheck' (App t t') c =
                 _ -> ty1
         _ -> ty2
     where
-        argMismatch = Left $ TyErr "Argument type does not match argument to arrow type"
-        noArrow = Left $ TyErr "Attempting to apply argument to non-arrow type"
+        argMismatch = Left $ TyErr "Argument type does not match first parameter to function type"
+        noArrow = Left $ TyErr "Attempting to apply argument to non-function type"
         ty1 = typeCheck' t c
         ty2 = typeCheck' t' c
 

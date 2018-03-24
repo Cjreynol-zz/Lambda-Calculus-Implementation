@@ -18,10 +18,10 @@ data Type = Arrow Type Type |
 
 instance Eq Type where
     (==) (Arrow t1 t2) (Arrow t1' t2') = t1 == t2 && (t1' == t2')
-    (==) (TypeVar _) (TypeVar _) = True
+    (==) (TypeVar v) (TypeVar v') = v == v'
     (==) _ _ = False
 
 instance Show Type where
     show (Arrow t t') = '(' : (show t) ++ " -> " ++ (show t') ++ ")"
-    show (TypeVar v) = show v
+    show (TypeVar v) = [v]
 
