@@ -7,9 +7,10 @@ License     : MIT
 module LambdaTerm(
     LambdaTerm(..),
     betaReduce,
-    open,
+    opening,
     normalize,
     redexExists,
+    showNoTypes,
     showReductionSteps
     ) where
 
@@ -34,8 +35,14 @@ data LambdaTerm ty =    BVar Nat |
 instance Show ty => Show (LambdaTerm ty) where
     show (BVar n) = show n
     show (FVar n) = 'f' : (show n)
-    show (Lam typ t) = '\\' : ':' : (show typ) ++ ".(" ++ (show t) ++ ")"
-    show (App t t') = '(' : ((show t) ++ " " ++ (show t') ++ ")")
+    show (Lam typ t) = '(' : '\\' : ':' : (show typ) ++ "." ++ (show t) ++ ")"
+    show (App t1 t2) = '(' : ((show t1) ++ " " ++ (show t2) ++ ")")
+
+showNoTypes :: Show ty => LambdaTerm ty -> String
+showNoTypes (BVar n) = show n
+showNoTypes (FVar n) = 'f' : (show n)
+showNoTypes (Lam _ t) = '(' : '\\' : '.' : (showNoTypes t) ++ ")"
+showNoTypes (App t1 t2) = '(' : ((showNoTypes t1) ++ " " ++ (showNoTypes t2) ++ ")")
 
 instance Eq (LambdaTerm ty) where
     (==) t1 t2 = treeEq (normalize t1) (normalize t2)
@@ -62,18 +69,18 @@ betaReduce :: LambdaTerm ty -> LambdaTerm ty
 betaReduce (BVar n) = BVar n
 betaReduce (FVar a) = FVar a
 betaReduce (Lam typ t) = Lam typ $ betaReduce t
-betaReduce (App (Lam _ t) t') = open t' Zero t
+betaReduce (App (Lam _ t) t') = opening t' Zero t
 betaReduce (App t1 t2) 
     | redexExists t1 = App (betaReduce t1) t2
     | otherwise = App t1 $ betaReduce t2
 
 -- | Used on lambda abstractions, replaces all instances of the variables 
 -- bound to that binder with the given term.  
-open :: LambdaTerm ty -> Atom -> LambdaTerm ty -> LambdaTerm ty
-open t n (BVar n') = if n == n' then t else BVar n'
-open _ _ (FVar a) = FVar a
-open t n (Lam typ t') = Lam typ $ open t (Succ n) t'
-open t n (App t1 t2) = App (open t n t1) (open t n t2)
+opening :: LambdaTerm ty -> Atom -> LambdaTerm ty -> LambdaTerm ty
+opening t k (BVar n) = if k == n then t else BVar n
+opening _ _ (FVar a) = FVar a
+opening t k (Lam typ t') = Lam typ $ opening t (Succ k) t'
+opening t k (App t1 t2) = App (opening t k t1) (opening t k t2)
 
 -- | Beta reduces until a normal form is reached.
 normalize :: LambdaTerm ty -> LambdaTerm ty

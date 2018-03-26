@@ -3,12 +3,12 @@ Module      : Pure.Parser
 Description : Parser for locally nameless untyped lambda terms
 Copyright   : (c) Chad Reynolds, 2018
 License     : MIT
-Description : No spaces, \\ . to represent lambda binders.  Bound variables 
-                are represented as natural numbers referencing their binder.  
-                Free variables  are also represented by natural numbers, but 
-                with an 'f' character preceding them.  Application is 
-                implicit with adjacent terms, and parenthesis can be used to 
-                end the binding scope of a lambda.  
+
+No spaces, \\ . to represent lambda binders.  Bound variables are represented 
+as natural numbers referencing their binder.  Free variables  are also 
+represented by natural numbers, but with an 'f' character preceding them.  
+Application is implicit with adjacent terms, and parenthesis can be used to 
+end the binding scope of a lambda.  
 -}
 module Pure.Parser(
     termParserChecker

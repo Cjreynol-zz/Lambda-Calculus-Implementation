@@ -3,23 +3,21 @@ Module      : SimpleTypes.Parser
 Description : Parsing functions for simply typed lambda calculus terms
 Copyright   : (c) Chad Reynolds, 2018
 License     : MIT
-Description : A typing context is expected first, wrapped in square brackets [].  
-                The elements inside are pairs (n,type) where n is a natural 
-                number and type is a valid type.  Consecutive pairs do not 
-                have any delimiter, and in the case of multiple pairs 
-                containing the same number n, the type associated with that 
-                variable in the context will be the last in the list.
 
-                Types are expected to be characters, typically uppercase, 
-                separated by arrows, ->.
+A typing context is expected first, wrapped in square brackets [].  The 
+elements inside are pairs (n,type) where n is a natural number and type is a 
+valid type.  Consecutive pairs do not have any delimiter, and in the case of 
+multiple pairs containing the same number n, the type associated with that 
+variable in the context will be the last in the list.
 
-                For terms, no spaces, \\:type. to represent lambda binders.  
-                Bound variables are represented as natural numbers 
-                referencing their binder as is standard in De Bruijn 
-                notation.  Free variables are also represented by natural 
-                numbers, but with an 'f' preceding them.  Application is 
-                implicit with adjacent terms, and parenthesis can be used to 
-                end the binding scope of a lambda.  
+Types are expected to be characters, typically uppercase, separated by 
+arrows, ->.
+
+For terms, no spaces, \\:type. to represent lambda binders.  Bound variables 
+are represented as natural numbers referencing their binder as is standard in 
+De Bruijn notation.  Free variables are also represented by natural numbers, 
+but with an 'f' preceding them.  Application is implicit with adjacent terms, 
+and parenthesis can be used to end the binding scope of a lambda.  
 -}
 module SimpleTypes.Parser(
     termParserChecker

@@ -1,8 +1,12 @@
 name:                lambda-cube
 version:             0.4.0.0
-synopsis:            Implementation(in-progress) of the 8 corners of the 
-                        lambda cube and the pure lambda calculus
---description:         
+synopsis:            Implementation of the lambda cube calculi
+description:         An in-progress implementation of the 8 calculi of the 
+                        lambda cube and pure lambda calculus.  The goal is to 
+                        formulate each of the corners branching off from STLC 
+                        in a way that the remaining corners are formed from 
+                        composing the previous pieces rather than duplicating 
+                        and extending.
 license:             MIT
 license-file:        LICENSE
 author:              Chad Reynolds
@@ -43,12 +47,12 @@ library
                         Nat,
                         Parsing
                         Pure,
-                        SimpleTypes
-
-    other-modules:      Parsing.ParseableContext,
+                        SimpleTypes,
+                        Parsing.ParseableContext,
                         Parsing.ParseableTerm,
                         Pure.Parser,
                         Pure.Term,
+                        SimpleTypes.Examples,
                         SimpleTypes.Parser,
                         SimpleTypes.Term,
                         SimpleTypes.Type,

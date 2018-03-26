@@ -8,6 +8,7 @@ module Context(
     Context,
     addToContext,
     atomLookup,
+    emptyContext,
     freshFVar,
     newContext
     ) where
@@ -31,6 +32,7 @@ first f (Ctx pair) = Ctx $ Bif.first f pair
 second :: ([Atom] -> [Atom]) -> Context ty -> Context ty
 second f (Ctx pair) = Ctx $ Bif.second f pair
 
+-- | A context with no variables inside
 emptyContext :: Context ty
 emptyContext = Ctx (Map.empty, allNats)
 

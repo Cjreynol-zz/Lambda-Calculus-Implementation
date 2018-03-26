@@ -7,11 +7,12 @@ License     : MIT
 module SimpleTypes.Term(
     Term,
     typedBetaEq,
+    typeCheck,
     typeCheckAndTerm
     ) where
 
 
-import LambdaTerm                   (LambdaTerm(..), open)
+import LambdaTerm                   (LambdaTerm(..), opening)
 import Nat                          (Nat(..))
 import Context                      (Context, addToContext, atomLookup, 
                                         freshFVar)
@@ -47,7 +48,7 @@ typeCheck' (Lam ty t) c = case bodyType of
                             _ -> bodyType
     where
         (atom, c') = freshFVar c
-        bodyType = typeCheck' (open (FVar atom) Zero t) (addToContext atom ty c')
+        bodyType = typeCheck' (opening (FVar atom) Zero t) (addToContext atom ty c')
 
 typeCheck' (App t t') c = 
     case ty2 of
