@@ -9,8 +9,8 @@ module Main(
     ) where
 
 
-import LambdaTerm           (showReductionSteps)
-import SimpleTypes.Parser   (termParserChecker)
+import LambdaTerm   (showReductionSteps)
+import Parsing      (termParserChecker)
 
 
 -- | Main loop of execution. 

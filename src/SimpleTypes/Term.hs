@@ -17,7 +17,6 @@ import Nat                          (Nat(..))
 import Context                      (Context, addToContext, atomLookup, 
                                         freshFVar)
 import SimpleTypes.Type             (Type(..))
-import SimpleTypes.TypingError      (TypingError(..))
 
 
 -- | Lambda terms with simple types.
@@ -33,14 +32,14 @@ typedBetaEq c t1 t2 = tyChF t1 && (tyChF t2) && (t1 == t2)
 
 -- | Generates types from annotated STLC terms, or returns an error if the 
 -- type annotations or term are incorrect.
-typeCheck :: Term -> Context Type -> Either TypingError Type
+typeCheck :: Term -> Context Type -> Either String Type
 typeCheck t c = typeCheck' t c
 
-typeCheck' :: Term -> Context Type -> Either TypingError Type
-typeCheck' (BVar _) _ = Left $ TyErr "Reached bound variable, term was not locally closed."
+typeCheck' :: Term -> Context Type -> Either String Type
+typeCheck' (BVar _) _ = Left "Reached bound variable, term was not locally closed."
 typeCheck' (FVar a) c = maybe left right $ atomLookup a c
     where
-        left = Left $ TyErr "Variable did not exist in the context."
+        left = Left "Variable did not exist in the context."
         right = (\x -> Right x)
 
 typeCheck' (Lam ty t) c = case bodyType of
@@ -62,13 +61,13 @@ typeCheck' (App t t') c =
                 _ -> ty1
         _ -> ty2
     where
-        argMismatch = Left $ TyErr "Argument type does not match first parameter to function type"
-        noArrow = Left $ TyErr "Attempting to apply argument to non-function type"
+        argMismatch = Left "Argument type does not match first parameter to function type"
+        noArrow = Left "Attempting to apply argument to non-function type"
         ty1 = typeCheck' t c
         ty2 = typeCheck' t' c
 
 -- | Pairs type checking result with the term, for use after parsing to output 
 -- the relevant information.
-typeCheckAndTerm :: Term -> Context Type -> Either TypingError (Type,Term)
+typeCheckAndTerm :: Term -> Context Type -> Either String (Type,Term)
 typeCheckAndTerm t c = typeCheck t c >>= \x -> Right (x,t)
 

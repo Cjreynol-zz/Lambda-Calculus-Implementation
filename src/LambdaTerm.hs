@@ -5,15 +5,16 @@ Copyright   : (c) Chad Reynolds, 2018
 License     : MIT
 -}
 module LambdaTerm(
-    LambdaTerm(..),
-    betaReduce,
-    opening,
-    normalize,
-    redexExists,
-    showNoTypes,
-    showReductionSteps
+      LambdaTerm(..)
+    , PureTerm
+    , betaReduce
+    , locallyClosedCheck
+    , normalize
+    , opening
+    , redexExists
+    , showNoTypes
+    , showReductionSteps
     ) where
-
 
 import  Nat     (Nat(..), Atom)
 
@@ -38,6 +39,7 @@ instance Show ty => Show (LambdaTerm ty) where
     show (Lam typ t) = '(' : '\\' : ':' : (show typ) ++ "." ++ (show t) ++ ")"
     show (App t1 t2) = '(' : ((show t1) ++ " " ++ (show t2) ++ ")")
 
+-- | Another show instance for LambdaTerms, but this ignores type annotations.
 showNoTypes :: Show ty => LambdaTerm ty -> String
 showNoTypes (BVar n) = show n
 showNoTypes (FVar n) = 'f' : (show n)
@@ -53,6 +55,9 @@ treeEq (FVar a) (FVar a') = if a == a' then True else False
 treeEq (Lam _ t) (Lam _ t') = treeEq t t'
 treeEq (App t1 t2) (App t1' t2') = treeEq t1 t1' && (treeEq t2 t2')
 treeEq _ _ = False
+
+-- | Untyped lambda terms.
+type PureTerm = LambdaTerm ()
 
 -- | Determine if a beta reducible expression exists within the term.
 redexExists :: LambdaTerm ty -> Bool
@@ -79,6 +84,7 @@ betaReduce (App t1 t2)
 opening :: LambdaTerm ty -> Atom -> LambdaTerm ty -> LambdaTerm ty
 opening t k (BVar n) = if k == n then t else BVar n
 opening _ _ (FVar a) = FVar a
+--opening (BVar n) k (Lam typ t') = Lam typ $ opening (BVar (Succ n)) (Succ k) t' 
 opening t k (Lam typ t') = Lam typ $ opening t (Succ k) t'
 opening t k (App t1 t2) = App (opening t k t1) (opening t k t2)
 
@@ -99,4 +105,20 @@ showReductionSteps t = addArrows . getSteps $ t
         addArrows [] = ""
         addArrows (x:[]) = show x
         addArrows (x:xs) = (show x) ++ " ~>\n" ++ (addArrows xs)
+
+isLocallyClosed :: LambdaTerm ty -> Bool
+isLocallyClosed t = isLocallyClosed' Zero t
+
+isLocallyClosed' :: Nat -> LambdaTerm ty -> Bool
+isLocallyClosed' n (BVar n') = n > n'
+isLocallyClosed' _ (FVar _) = True
+isLocallyClosed' n (Lam _ t') = isLocallyClosed' (Succ n) t'
+isLocallyClosed' n (App t' t'') = (isLocallyClosed' n t') && (isLocallyClosed' n t'')
+
+-- | Error checking for terms to ensure they are locally closed.  Used for 
+-- parsing terms.
+locallyClosedCheck :: LambdaTerm ty -> Either String (LambdaTerm ty)
+locallyClosedCheck t
+    | isLocallyClosed t = Right t
+    | otherwise = Left "Invalid term, not locally closed.  Check bound variable indices."
 

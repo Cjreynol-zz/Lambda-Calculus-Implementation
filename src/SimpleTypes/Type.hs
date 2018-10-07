@@ -5,7 +5,7 @@ Copyright   : (c) Chad Reynolds, 2018
 License     : MIT
 -}
 module SimpleTypes.Type(
-    Type(..)
+      Type(..)
     ) where
 
 
